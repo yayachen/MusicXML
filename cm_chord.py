@@ -72,6 +72,7 @@ if __name__== "__main__":
         for f in files:       
             base=os.path.basename(f)
             print(base)
+            
             filepath = root+"\\"+base
             data = readmatfile(filepath)
             if root.split('\\')[-1] != 'chordGT':
@@ -83,7 +84,7 @@ if __name__== "__main__":
         cm.append(confusion_matrix(chord_GT[i], chord_result[i],labels = chord_number)) #, ignore_index=True
     ALLcm = sum(cm)    
 
-    """
+    """    
     # plot_confusion_matrix all
     plt.figure(figsize=(10, 10))
     plot_confusion_matrix(ALLcm, classes=chord_number,
@@ -94,8 +95,7 @@ if __name__== "__main__":
     plot_confusion_matrix(ALLcm, classes=chord_number, normalize=True,
                       title='Chords Normalized confusion matrix')
     plt.savefig('Chords Normalized confusion matrix', dpi=600,bbox_inches="tight")
-    """    
-    
+    """        
     chord_quality_result = [ ch.split(":")[-1] for song in chord_result for ch in song]
     chord_quality_GT = [ ch.split(":")[-1] for song in chord_GT  for ch in song]
     chord_root_result = [ ch.split(":")[0] for song in chord_result for ch in song]
@@ -114,7 +114,7 @@ if __name__== "__main__":
     relative_cnf = [relative.count(x) for x in range(len(pitchclass))]
     relative_cnf = np.array(relative_cnf )/sum(relative_cnf )    
     
-    """
+"""    
     # plot_confusion_matrix quality root
     plt.figure()
     plot_confusion_matrix(quality_cm, classes=chord_template,
@@ -136,21 +136,10 @@ if __name__== "__main__":
     plot_confusion_matrix(root_cm, classes=pitchclass, normalize=True,
                       title='Chords root Normalized confusion matrix')
     plt.savefig('Chords root Normalized confusion matrix', dpi=500,bbox_inches="tight")
-    """
+"""    
     
-    """
-    cm = []
-    relative = []
-    for i in range(len(chord_GT)):
-        cm.append(confusion_matrix(chord_GT[i], chord_result[i],labels = key)) #, ignore_index=True
-        relative+=([ (key.index(chord_result[i][j]) - key.index(chord_GT[i][j]) ) %24
-                             for j in range(len(chord_GT[i]))])
-    ALLcm = sum(cm)
-    #relative_cnf = [relative.count(x) for x in range(len(key))]
-    #relative_cnf = np.array(relative_cnf )/sum(relative_cnf )
-    """
 
-    
+"""    
     # plt relative
     plt.figure()
     plt.bar(range(len(pitchclass)),relative_cnf)
@@ -159,4 +148,4 @@ if __name__== "__main__":
     plt.ylabel("Probability")
     plt.title('Relative Chords root Predict')
     plt.savefig('Relative Chords root Predict', dpi=200,bbox_inches="tight")
-    
+"""    

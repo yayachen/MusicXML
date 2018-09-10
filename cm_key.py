@@ -55,7 +55,8 @@ if __name__== "__main__":
     
         for f in files:       
             base=os.path.basename(f)
-            print(root)
+            print(base)
+            
             filepath = root+"\\"+base
             data = readmatfile(filepath)
             if root.split('\\')[-1] != 'chordGT':
@@ -73,7 +74,7 @@ if __name__== "__main__":
     relative_cnf = [relative.count(x) for x in range(len(key))]
     relative_cnf = np.array(relative_cnf )/sum(relative_cnf )
     
-"""  
+""" 
     # plot_confusion_matrix
     plt.figure(figsize=(8, 8))
     plot_confusion_matrix(ALLcm, classes=key,
@@ -84,7 +85,7 @@ if __name__== "__main__":
     plot_confusion_matrix(ALLcm, classes=key, normalize=True,
                       title='Keys Normalized confusion matrix')
     plt.savefig('Keys Normalized confusion matrix', dpi=500,bbox_inches="tight")
-"""    
+       
 
     plt.figure()
     plt.bar(range(len(key)),relative_cnf)
@@ -93,3 +94,4 @@ if __name__== "__main__":
     plt.ylabel("Probability")
     plt.title('Relative Key Predict')
     plt.savefig('Relative Key Predict.png', dpi=200,bbox_inches="tight")
+"""

@@ -10,6 +10,7 @@ import xlrd
 import pyfpgrowth
 from collections import Counter
 import matplotlib.pyplot as plt
+import scipy.io
 
 
 template = {'maj':(0,4,7),
@@ -36,12 +37,14 @@ def init():
     global Voicing_patterns
     global Voicing_rules
     global Voicing_count
+    global Voicing_mat
     Voicing = {}
     for t in list(template.keys()):
         Voicing[t] =[]#{}
     Voicing_patterns = {}
     Voicing_rules = {}
     Voicing_count = {}
+    Voicing_mat = {}
     
 def VoicingAnalyze(songpath,songname):  
     # read groundtruth chord ('trans_'+songname
@@ -63,6 +66,7 @@ def VoicingAnalyze(songpath,songname):
     # Chordlist [Measure,Beat,[pitchs]]
 
     xmldata = converter.parse(songpath+songname+'.xml')
+    #xmldata = xmldata.stripTies(matchByPitch=True,retainContainers=True)
     xmlChords = xmldata.chordify()
     Chordlist = []
     #xmlChords.measures(1, 65).recurse().getElementsByClass('Chord'):
@@ -124,22 +128,43 @@ def plot_bar(quality):
     names,values = zip(*data)
     plt.bar(range(len(data)),values,tick_label=names)
     plt.savefig("Voicing_"+quality+".png",dpi = 300)
-    
+
+def Voicing2mat(songname):
+    for k,e in Voicing_count.items():
+        Voicing_mat[k] = []
+        for pitch in range(12):
+            v = Voicing_count[k].get(pitch, 0)
+            Voicing_mat[k].append(v)
+    Voicing_mat['dom7'] = Voicing_mat['7']
+    scipy.io.savemat(songname+'_Voicing.mat',  {'Voicing':Voicing_mat})
+    return  Voicing_mat   
+
 if __name__== "__main__":
+    
     peipath = "C:/Users/stanley/Desktop/SCREAM Lab/np&pd/DETECTION OF KEY CHANGE IN CLASSICAL PIANO MUSIC/midi/pei/"
-    #songlist = ['m_16_1','b_4_2','b_20_1','b_20_2','c_40_1','c_47_1',
-    #       'h_23_1','h_37_1','h_37_2','m_7_1','m_7_2','m_16_1','m_16_2']
     songlist = ['m_16_1','b_4_1','b_4_2','b_20_1','b_20_2','c_40_1','c_47_1',
            'h_23_1','h_37_1','h_37_2','m_7_1','m_7_2','m_16_1','m_16_2']
-    #songlist = ['c_40_1']
+    #songlist = ['m_16_1']
     init()
     for s in songlist:
         print(s)
         VoicingAnalyze(peipath,s)  
+
     AssociationRule(Voicing,0,0.2)
     Count_voicing(Voicing)
-    [ plot_bar(key) for key in Voicing_count.keys() ]
+    #[ plot_bar(key) for key in Voicing_count.keys() ]
+    Voicing2mat('All')
     
+    """
+    # individual
+    for s in songlist:
+        init()
+        print(s)
+        VoicingAnalyze(peipath,s)  
+        Count_voicing(Voicing)
+        Voicing2mat(s)
+    """     
+        
     
 
 

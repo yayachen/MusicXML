@@ -44,7 +44,19 @@ def getKeyeachBar(data):
     key_data = [ x for x in key_data if x != '']
     return key_data
 
-
+def plot_bar(data,xticks,title):
+    
+    data = [data.count(x) for x in range(len(key))]
+    data = np.array(data )/sum(data )
+    
+    # plot
+    plt.figure()
+    plt.bar(range(len(xticks)),data)
+    plt.xticks(range(len(xticks)), xticks)
+    plt.xlabel("Keys")
+    plt.ylabel("Probability")
+    plt.title(title)
+    plt.savefig(title+'.png', dpi=200,bbox_inches="tight")
     
 if __name__== "__main__":    
     r_dir = r'C:\Users\stanley\Desktop\SCREAM Lab\YA\code\key_analysis\key_result\pei'   #root+'\\'+path
@@ -56,7 +68,7 @@ if __name__== "__main__":
         for f in files:       
             base=os.path.basename(f)
             print(base)
-            
+            if base != 'c_40_1.mat':continue
             filepath = root+"\\"+base
             data = readmatfile(filepath)
             if root.split('\\')[-1] != 'chordGT':
@@ -66,14 +78,32 @@ if __name__== "__main__":
     
     cm = []
     relative = []
+    Moveable_Do_major = []
+    Moveable_Do_minor = []
     for i in range(len(key_GT)):
         cm.append(confusion_matrix(key_GT[i], key_result[i],labels = key)) #, ignore_index=True
         relative+=([ (key.index(key_result[i][j]) - key.index(key_GT[i][j]) ) %24
                              for j in range(len(key_GT[i]))])
+        for j in range(len(key_GT[i])) :
+            if key_GT[i][j].isupper():
+                if key_result[i][j].isupper():
+                    Moveable_Do_major += [(key.index(key_result[i][j]) - key.index(key_GT[i][j]) ) %12]
+                else:
+                    Moveable_Do_major += [(key.index(key_result[i][j]) - key.index(key_GT[i][j]) - 12 ) %12 + 12]
+                
+            else:
+                if key_result[i][j].islower():
+                    Moveable_Do_minor += [(key.index(key_result[i][j]) - key.index(key_GT[i][j]) ) %12]
+                else:
+                    Moveable_Do_minor += [(key.index(key_result[i][j]) - key.index(key_GT[i][j]) - 12 ) %12 + 12]
+                        
+                
     ALLcm = sum(cm)
-    relative_cnf = [relative.count(x) for x in range(len(key))]
-    relative_cnf = np.array(relative_cnf )/sum(relative_cnf )
     
+    
+    #plot_bar(relative,key,'Relative Key Predict')
+    #plot_bar(Moveable_Do_major,key,'Moveable_Do_major Predict')
+    #plot_bar(Moveable_Do_minor,key[12:]+key[:12],'Moveable_Do_minor Predict')
 """ 
     # plot_confusion_matrix
     plt.figure(figsize=(8, 8))
